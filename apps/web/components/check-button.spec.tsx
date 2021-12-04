@@ -8,17 +8,17 @@ import * as swr from 'swr';
 import * as libMutate from '../lib/mutate-utils';
 
 describe('Check Button', () => {
-  it('calls mutate and mutateUpdateTask', () => {
+  it('calls mutate and mutateUpdateProfessor', () => {
     const mutate = jest.spyOn(swr, 'mutate');
 
-    const mutateUpdateTask = jest
-      .spyOn(libMutate, 'mutateUpdateTask')
+    const mutateUpdateProfessor = jest
+      .spyOn(libMutate, 'mutateUpdateProfessor')
       .mockImplementation(() => Promise.resolve([]));
 
-    const { container } = render(<CheckButton taskId="task_id" />);
+    const { container } = render(<CheckButton professorId="professor_id" />);
 
     fireEvent.click(container.querySelector('#check-button'));
     expect(mutate).toHaveBeenCalled();
-    expect(mutateUpdateTask).toHaveBeenCalled();
+    expect(mutateUpdateProfessor).toHaveBeenCalled();
   });
 });

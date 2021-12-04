@@ -5,7 +5,7 @@ Design and Development of Web Information Systems
 
 ```bash
 # Running Front-End
- run start web
+yarn run start web
 
 # Running Back-End
 yarn run start api

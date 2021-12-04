@@ -1,5 +1,5 @@
-import { ITask } from '@todos/shared/interfaces';
-import React, { Fragment } from 'react';
+import { IProfessor } from '@todos/shared/interfaces';
+import React, { FC, Fragment } from 'react';
 import { useAppDispatch } from '../context/app';
 import { FORM_TYPE } from '../reducers/form';
 import classNames from 'classNames';
@@ -8,10 +8,10 @@ import { CheckButton } from './check-button';
 import { DeleteButton } from './delete-button';
 
 interface IProps {
-  task: ITask;
+  professor: IProfessor;
 }
 
-export const Task: React.FC<IProps> = ({ task }) => {
+export const Professor: FC<IProps> = ({ professor }) => {
   const dispatch = useAppDispatch();
 
   return (
@@ -20,27 +20,30 @@ export const Task: React.FC<IProps> = ({ task }) => {
         'px-4 py-2 border border-gray-200 rounded-md shadow-sm h-16 transition-all cursor-pointer hover:shadow-md'
       )}
       onClick={() =>
-        dispatch({ type: FORM_TYPE.OPEN_UPDATE, payload: { _id: task._id } })
+        dispatch({
+          type: FORM_TYPE.OPEN_UPDATE,
+          payload: { _id: professor._id },
+        })
       }
-      id={task.title}
+      id={professor.fullName}
     >
       <div className="flex flex-row justify-between items-center flex-1">
         <div>
           <p
             className={classNames('text-lg truncate', {
-              'text-green-500 line-through': task.isCompleted,
+              'text-green-500 line-through': professor.isCompleted,
             })}
-            id="task-title"
+            id="professor-full-name"
           >
-            {task.title}
+            {professor.fullName}
           </p>
         </div>
         <div className="flex flex-row space-x-2 flex-none">
-          {task.isCompleted && <CheckedIcon />}
-          {!task.isCompleted && (
+          {professor.isCompleted && <CheckedIcon />}
+          {!professor.isCompleted && (
             <Fragment>
-              <CheckButton taskId={task._id} />
-              <DeleteButton taskId={task._id} />
+              {/* <CheckButton professorId={professor._id} /> */}
+              <DeleteButton professorId={professor._id} />
             </Fragment>
           )}
         </div>

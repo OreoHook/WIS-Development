@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { Dispatch, useReducer } from 'react';
 import { reducer, InitialState, initialState } from '../reducers';
 import { FormActions } from '../reducers/form';
@@ -17,9 +17,7 @@ export const AppProvider: React.FC = ({ children }) => {
 
   return (
     <DispatchContext.Provider value={dispatch}>
-      <StateContext.Provider value={state}>
-        {children}
-      </StateContext.Provider>
+      <StateContext.Provider value={state}>{children}</StateContext.Provider>
     </DispatchContext.Provider>
   );
 };

@@ -1,21 +1,24 @@
-import { ITask } from '@todos/shared/interfaces';
-import React from 'react';
+import React, { FC } from 'react';
+import { IProfessor } from '@todos/shared/interfaces';
 import { mutate } from 'swr';
-import { mutateDeleteTask } from '../lib/mutate-utils';
+import { mutateDeleteProfessor } from '../lib/mutate-utils';
+import { toast } from 'react-toastify';
 
 interface IProp {
-  taskId: string;
+  professorId: string;
 }
 
-export const DeleteButton: React.FC<IProp> = ({ taskId }) => {
+export const DeleteButton: FC<IProp> = ({ professorId }) => {
   const handleClick = async (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
     e.stopPropagation(); // Prevents further propagation of the current event in the bubbling phase
 
-    mutate('/api/tasks', async (tasks: ITask[]) =>
-      mutateDeleteTask(tasks, { taskId })
-    );
+    mutate('/api/professors', async (professors: IProfessor[]) =>
+      mutateDeleteProfessor(professors, { professorId })
+    ).then(() => {
+      return toast.success('Преподаватель успешно удален!');
+    });
   };
 
   return (

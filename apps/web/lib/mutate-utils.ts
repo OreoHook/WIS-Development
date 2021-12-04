@@ -1,25 +1,33 @@
-import { ITask } from '@todos/shared/interfaces';
-import { createTask, deleteTask, updateTask } from './api';
+import { IProfessor } from '@todos/shared/interfaces';
+import { createProfessor, deleteProfessor, updateProfessor } from './api';
 
-export const mutateCreateTask = async (prevTasks: ITask[], formData) => {
-  const newTask = await createTask({ formData });
-
-  return [newTask, ...prevTasks];
-};
-
-export const mutateUpdateTask = async (
-  prevTasks: ITask[],
-  { taskId, formData }
+export const mutateCreateProfessor = async (
+  prevProfessors: IProfessor[],
+  formData
 ) => {
-  const updatedTask = await updateTask({ taskId, formData });
+  const newProfessor = await createProfessor({ formData });
 
-  const filteredTasks = prevTasks.filter((t) => t._id !== taskId);
-
-  return [...filteredTasks, updatedTask];
+  return [newProfessor, ...prevProfessors];
 };
 
-export const mutateDeleteTask = async (prevTasks: ITask[], { taskId }) => {
-  return deleteTask({ taskId }).then(() =>
-    prevTasks.filter((t) => t._id !== taskId)
+export const mutateUpdateProfessor = async (
+  prevProfessors: IProfessor[],
+  { professorId, formData }
+) => {
+  const updatedProfessor = await updateProfessor({ professorId, formData });
+
+  const filteredProfessors = prevProfessors.filter(
+    (t) => t._id !== professorId
+  );
+
+  return [...filteredProfessors, updatedProfessor];
+};
+
+export const mutateDeleteProfessor = async (
+  prevProfessors: IProfessor[],
+  { professorId }
+) => {
+  return deleteProfessor({ professorId }).then(() =>
+    prevProfessors.filter((t) => t._id !== professorId)
   );
 };

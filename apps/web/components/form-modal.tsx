@@ -1,41 +1,47 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, VFC } from 'react';
 import { Transition } from '@headlessui/react';
 import { componentWillAppendToBody } from 'react-append-to-body';
 import { useAppContext, useAppDispatch } from '../context/app';
 import { FORM_METHOD, FORM_TYPE } from '../reducers/form';
 import { useForm } from 'react-hook-form';
-import { ITask } from '@todos/shared/interfaces';
+import { IDepartment, IProfessor } from '@todos/shared/interfaces';
 import dayjs from 'dayjs';
-import { mutate } from 'swr';
-import { mutateCreateTask, mutateUpdateTask } from '../lib/mutate-utils';
+import useSWR, { mutate } from 'swr';
+import { toast } from 'react-toastify';
+import {
+  mutateCreateProfessor,
+  mutateUpdateProfessor,
+} from '../lib/mutate-utils';
 import { UndoButton } from './undo-button';
 
-interface IFormData {
-  _id?: string;
-  title: string;
-  dueDate: Date;
-  isCompleted: boolean;
-}
-
-const FormModal = () => {
+const FormModal: VFC = () => {
   const { form } = useAppContext();
   const dispatch = useAppDispatch();
+  const { data: departments } = useSWR<IDepartment[]>('/api/departments');
 
-  const { register, handleSubmit, errors, reset, watch } = useForm<IFormData>({
+  const { register, handleSubmit, errors, reset, watch } = useForm<IProfessor>({
     defaultValues: {
       _id: null,
-      title: '',
-      dueDate: null,
+      department: '',
+      position: '',
+      academicDegree: '',
+      fullName: '',
+      sex: '',
+      passport: '',
+      dateOfBirth: null,
       isCompleted: false,
     },
   });
 
   useEffect(() => {
     const fetchData = () => {
-      fetch(`/api/tasks/${form._id}`)
+      fetch(`/api/professors/${form._id}`)
         .then((r) => r.json())
         .then((d) =>
-          reset({ ...d, dueDate: dayjs(d.dueDate).format('YYYY-MM-DD') })
+          reset({
+            ...d,
+            dateOfBirth: dayjs(d.dateOfBirth).format('YYYY-MM-DD'),
+          })
         );
     };
 
@@ -44,14 +50,23 @@ const FormModal = () => {
     }
   }, [form._id, reset]);
 
-  const onSubmit = (formData: IFormData) => {
-    mutate('/api/tasks', async (tasks: ITask[]) => {
+  const onSubmit = (formData: IProfessor) => {
+    mutate('/api/professors', async (professors: IProfessor[]) => {
       if (form.method === FORM_METHOD.UPDATE) {
-        return mutateUpdateTask(tasks, { taskId: form._id, formData });
+        return mutateUpdateProfessor(professors, {
+          professorId: form._id,
+          formData,
+        });
+      } else {
+        return mutateCreateProfessor(professors, formData);
       }
-      return mutateCreateTask(tasks, formData);
     }).then(() => {
       dispatch({ type: FORM_TYPE.CLOSE });
+      if (form.method === FORM_METHOD.UPDATE) {
+        return toast.success('Данные преподавателя обновлены!');
+      } else {
+        return toast.success('Преподаватель создан!');
+      }
     });
   };
 
@@ -69,12 +84,12 @@ const FormModal = () => {
           leave="transition ease-in-expo duration-300"
           leaveFrom="transform translate-y-0"
           leaveTo="transform translate-y-full"
-          className="block align-bottom bg-white text-left overflow-hidden shadow-xl w-screen lg:w-3/4 lg:max-w-lg pb-20 z-20 min-h-screen mx-auto"
+          className="block align-bottom bg-white text-left overflow-hidden shadow-xl w-screen lg:w-3/4 pb-20 z-20 min-h-screen mx-auto"
         >
           <div className="sticky top-0 bg-white px-4 py-3">
             <div className="flex items-center">
               <div className="text-lg text-mine-shaft-500 font-semibold">
-                {form.method} TASK
+                {form.method} PROFESSOR
               </div>
               <div
                 className="ml-auto text-gray-700 w-10 h-10 inline-flex items-center justify-cent hover:bg-gray-100 p-1 rounded-full cursor-pointer "
@@ -98,31 +113,120 @@ const FormModal = () => {
           <hr className="border-t border-gray-200 w-full" />
           <div className="grid grid-cols-1 gap-6 mx-4 py-8">
             <label className="block">
-              <span className="text-gray-700">Name of the task</span>
-              <input
-                type="text"
-                name="title"
+              <span className="text-gray-700">Кафедра</span>
+              <select
+                name="department"
                 ref={register({ required: true })}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                placeholder="Name of the task"
-              />
-              {errors.title && (
-                <span className="text-base text-red-400" id="reqired-title">
-                  This field is required
+                className="form-select mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+              >
+                {departments?.map((department: IDepartment) => (
+                  <option key={department._id} value={department.title}>
+                    {department.title}
+                  </option>
+                ))}
+              </select>
+              {errors.department && (
+                <span
+                  className="text-base text-red-400"
+                  id="reqired-department"
+                >
+                  Обязательно для заполнения
                 </span>
               )}
             </label>
+
             <label className="block">
-              <span className="text-gray-700">I want to do this task on</span>
+              <span className="text-gray-700">Должность</span>
               <input
-                type="date"
-                name="dueDate"
+                type="text"
+                name="position"
                 ref={register({ required: true })}
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
               />
-              {errors.dueDate && (
-                <span className="text-base text-red-400" id="reqired-due-date">
-                  This field is required
+              {errors.position && (
+                <span className="text-base text-red-400" id="reqired-position">
+                  Обязательно для заполнения
+                </span>
+              )}
+            </label>
+
+            <label className="block">
+              <span className="text-gray-700">Ученая степень</span>
+              <input
+                type="text"
+                name="academicDegree"
+                ref={register({ required: true })}
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+              />
+              {errors.academicDegree && (
+                <span
+                  className="text-base text-red-400"
+                  id="reqired-academic-degree"
+                >
+                  Обязательно для заполнения
+                </span>
+              )}
+            </label>
+
+            <label className="block">
+              <span className="text-gray-700">ФИО</span>
+              <input
+                type="text"
+                name="fullName"
+                ref={register({ required: true })}
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+              />
+              {errors.fullName && (
+                <span className="text-base text-red-400" id="reqired-full-name">
+                  Обязательно для заполнения
+                </span>
+              )}
+            </label>
+
+            <label className="block">
+              <span className="text-gray-700">Пол</span>
+              <input
+                type="text"
+                name="sex"
+                ref={register({ required: true })}
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+              />
+              {errors.sex && (
+                <span className="text-base text-red-400" id="reqired-sex">
+                  Обязательно для заполнения
+                </span>
+              )}
+            </label>
+
+            <label className="block">
+              <span className="text-gray-700">Паспортные данные</span>
+              <input
+                type="text"
+                name="passport"
+                ref={register({ required: true })}
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+              />
+              {errors.passport && (
+                <span className="text-base text-red-400" id="reqired-passport">
+                  Обязательно для заполнения
+                </span>
+              )}
+            </label>
+
+            <label className="block">
+              <span className="text-gray-700">Дата рождения</span>
+              <input
+                type="date"
+                name="dateOfBirth"
+                ref={register({ required: true })}
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+              />
+              {errors.dateOfBirth && (
+                <span
+                  className="text-base text-red-400"
+                  id="reqired-date-of-birth"
+                >
+                  Обязательно для заполнения
                 </span>
               )}
             </label>
@@ -138,7 +242,7 @@ const FormModal = () => {
           className="fixed bottom-0 w-screen lg:w-3/4 lg:max-w-lg px-4 py-4 border-t border-gray-200 bg-white z-20 space-x-2"
         >
           {form.method === FORM_METHOD.UPDATE && watch('isCompleted') && (
-            <UndoButton taskId={form._id} />
+            <UndoButton professorId={form._id} />
           )}
           <button
             className="bg-blue-500 text-white text-2xl px-16 py-2 rounded-md"

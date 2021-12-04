@@ -1,4 +1,4 @@
-import { IProfessorDto, TSex } from '@todos/shared/interfaces';
+import { IProfessorDto } from '@todos/shared/interfaces';
 
 export class ProfessorDto implements IProfessorDto {
   department: string;
@@ -6,6 +6,6 @@ export class ProfessorDto implements IProfessorDto {
   academicDegree: string;
   fullName: string;
   dateOfBirth: Date;
-  sex: TSex;
+  sex: string;
   passport: string;
 }

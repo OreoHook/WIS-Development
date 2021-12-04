@@ -1,5 +1,3 @@
-export type TSex = 'M' | 'F';
-
 export interface IProfessor {
   _id: string;
   department: string;
@@ -7,8 +5,9 @@ export interface IProfessor {
   academicDegree: string;
   fullName: string;
   dateOfBirth: Date;
-  sex: TSex;
+  sex: string;
   passport: string;
+  isCompleted: boolean;
 }
 
 export interface IProfessorDto {
@@ -17,6 +16,6 @@ export interface IProfessorDto {
   academicDegree: string;
   fullName: string;
   dateOfBirth: Date;
-  sex: TSex;
+  sex: string;
   passport: string;
 }

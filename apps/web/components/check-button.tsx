@@ -1,21 +1,21 @@
-import { ITask } from '@todos/shared/interfaces';
+import { IProfessor } from '@todos/shared/interfaces';
 import React from 'react';
 import { mutate } from 'swr';
-import { mutateUpdateTask } from '../lib/mutate-utils';
+import { mutateUpdateProfessor } from '../lib/mutate-utils';
 
 interface IProp {
-  taskId: string;
+  professorId: string;
 }
 
-export const CheckButton: React.FC<IProp> = ({ taskId }) => {
+export const CheckButton: React.FC<IProp> = ({ professorId }) => {
   const handleClick = async (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
     e.stopPropagation(); // Prevents further propagation of the current event in the bubbling phase
 
-    mutate('/api/tasks', async (tasks: ITask[]) =>
-      mutateUpdateTask(tasks, {
-        taskId: taskId,
+    mutate('/api/professors', async (professors: IProfessor[]) =>
+      mutateUpdateProfessor(professors, {
+        professorId: professorId,
         formData: { isCompleted: true },
       })
     );

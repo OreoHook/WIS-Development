@@ -3,7 +3,7 @@ import { FormActions } from './form';
 
 export enum LOADER_TYPE {
   OPEN = 'OPEN_LOADER',
-  CLOSE = 'CLOSE_LOADER'
+  CLOSE = 'CLOSE_LOADER',
 }
 
 type LoaderPayload = {
@@ -16,7 +16,7 @@ export type LoaderActions = ActionMap<LoaderPayload>[keyof ActionMap<
 >];
 
 export const loaderInitialState = {
-  isOpen: false
+  isOpen: false,
 };
 
 export type LoaderState = typeof loaderInitialState;

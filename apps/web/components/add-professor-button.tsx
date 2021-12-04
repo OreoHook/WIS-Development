@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { VFC } from 'react';
 import { useAppDispatch } from '../context/app';
 import { FORM_TYPE } from '../reducers/form';
 
-export const AddTaskButton = () => {
+export const AddProfessorButton: VFC = () => {
   const dispatch = useAppDispatch();
 
   return (

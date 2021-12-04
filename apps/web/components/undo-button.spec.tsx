@@ -8,17 +8,17 @@ import * as swr from 'swr';
 import * as libMutate from '../lib/mutate-utils';
 
 describe('Undo Button', () => {
-  it('calls mutate and mutateUpdateTask', () => {
+  it('calls mutate and mutateUpdateProfessor', () => {
     const mutate = jest.spyOn(swr, 'mutate');
 
-    const mutateUpdateTask = jest
-      .spyOn(libMutate, 'mutateUpdateTask')
+    const mutateUpdateProfessor = jest
+      .spyOn(libMutate, 'mutateUpdateProfessor')
       .mockImplementation(() => Promise.resolve([]));
 
-    const { container } = render(<UndoButton taskId="task_id" />);
+    const { container } = render(<UndoButton professorId="professor_id" />);
 
-    fireEvent.click(container.querySelector('#undo-task'));
+    fireEvent.click(container.querySelector('#undo-professor'));
     expect(mutate).toHaveBeenCalled();
-    expect(mutateUpdateTask).toHaveBeenCalled();
+    expect(mutateUpdateProfessor).toHaveBeenCalled();
   });
 });

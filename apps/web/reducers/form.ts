@@ -44,7 +44,11 @@ export const formReducer = (
     case FORM_TYPE.OPEN_CREATE:
       return { isOpen: true, _id: null, method: FORM_METHOD.CREATE };
     case FORM_TYPE.OPEN_UPDATE:
-      return { isOpen: true, _id: action.payload._id, method: FORM_METHOD.UPDATE };
+      return {
+        isOpen: true,
+        _id: action.payload._id,
+        method: FORM_METHOD.UPDATE,
+      };
     case FORM_TYPE.CLOSE:
       return { isOpen: false, _id: null, method: null };
     default:

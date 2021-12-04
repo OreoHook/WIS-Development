@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
-import { IProfessor, TSex } from '@todos/shared/interfaces';
+import { IProfessor } from '@todos/shared/interfaces';
 
 export type ProfessorDocument = Professor & Document;
 
@@ -24,10 +24,13 @@ export class Professor implements IProfessor {
   dateOfBirth: Date;
 
   @Prop({ required: true })
-  sex: TSex;
+  sex: string;
 
   @Prop({ required: true })
   passport: string;
+
+  @Prop({ default: false })
+  isCompleted: boolean;
 }
 
 export const ProfessorSchema = SchemaFactory.createForClass(Professor);
